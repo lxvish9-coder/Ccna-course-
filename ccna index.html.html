@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CCNA Mastery — Cisco Certified Network Associate</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #050d18;
+      --surface:   #0a1628;
+      --card:      #0f1e35;
+      --border:    #1a3050;
+      --accent:    #00c8ff;
+      --accent2:   #0066cc;
+      --green:     #00ff88;
+      --text:      #e0eaf5;
+      --muted:     #6b8aaa;
+      --mono:      'Share Tech Mono', monospace;
+      --sans:      'Inter', sans-serif;
+      --display:   'Orbitron', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── GRID OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,200,255,.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,200,255,.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 5%;
+      height: 64px;
+      background: rgba(5,13,24,.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      z-index: 100;
+    }
+    .nav-logo {
+      font-family: var(--display);
+      font-size: 1.1rem;
+      color: var(--accent);
+      letter-spacing: 2px;
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--green); }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: .875rem;
+      font-weight: 500;
+      letter-spacing: .5px;
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-cta {
+      background: var(--accent);
+      color: var(--bg) !important;
+      padding: .4rem 1.2rem;
+      border-radius: 4px;
+      font-weight: 600 !important;
+    }
+    .nav-cta:hover { background: var(--green); color: var(--bg) !important; }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+    .hamburger span { width: 24px; height: 2px; background: var(--accent); border-radius: 2px; }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 0 5%;
+      padding-top: 64px;
+      overflow: hidden;
+    }
+    .hero-content { position: relative; z-index: 2; max-width: 680px; }
+    .hero-eyebrow {
+      font-family: var(--mono);
+      font-size: .75rem;
+      color: var(--green);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+    .hero-eyebrow::before { content: '> '; }
+    h1 {
+      font-family: var(--display);
+      font-size: clamp(2.2rem, 5vw, 4rem);
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -1px;
+      margin-bottom: 1.5rem;
+    }
+    h1 .line-accent { color: var(--accent); }
+    .hero-sub {
+      font-size: 1.1rem;
+      color: var(--muted);
+      max-width: 520px;
+      margin-bottom: 2.5rem;
+      line-height: 1.8;
+    }
+    .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .btn-primary {
+      background: var(--accent);
+      color: var(--bg);
+      padding: .85rem 2rem;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: .95rem;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: background .2s, transform .15s;
+      letter-spacing: .5px;
+    }
+    .btn-primary:hover { background: var(--green); transform: translateY(-2px); }
+    .btn-outline {
+      background: transparent;
+      color: var(--accent);
+      padding: .85rem 2rem;
+      border-radius: 4px;
+      font-weight: 600;
+      font-size: .95rem;
+      text-decoration: none;
+      border: 1px solid var(--accent);
+      cursor: pointer;
+      transition: background .2s;
+      letter-spacing: .5px;
+    }
+    .btn-outline:hover { background: rgba(0,200,255,.08); }
+
+    /* Animated topology */
+    .hero-visual {
+      position: absolute;
+      right: -5%;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 550px;
+      opacity: .18;
+      z-index: 1;
+    }
+    .hero-stats {
+      display: flex;
+      gap: 2.5rem;
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+    }
+    .stat-num {
+      font-family: var(--display);
+      font-size: 1.8rem;
+      color: var(--accent);
+      font-weight: 900;
+    }
+    .stat-label { font-size: .8rem; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; }
+
+    /* ── SECTIONS ── */
+    section { position: relative; padding: 6rem 5%; z-index: 1; }
+    .section-tag {
+      font-family: var(--mono);
+      font-size: .7rem;
+      color: var(--accent);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: .75rem;
+    }
+    h2 {
+      font-family: var(--display);
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      font-weight: 900;
+      margin-bottom: 1rem;
+      letter-spacing: -.5px;
+    }
+    .section-sub { color: var(--muted); max-width: 540px; margin-bottom: 3rem; line-height: 1.7; }
+
+    /* ── COURSE MODULES ── */
+    #modules { background: var(--surface); }
+    .modules-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+    .module-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.75rem;
+      position: relative;
+      overflow: hidden;
+      transition: border-color .2s, transform .2s;
+      cursor: pointer;
+    }
+    .module-card:hover { border-color: var(--accent); transform: translateY(-4px); }
+    .module-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--green));
+      opacity: 0;
+      transition: opacity .2s;
+    }
+    .module-card:hover::before { opacity: 1; }
+    .module-num {
+      font-family: var(--mono);
+      font-size: .7rem;
+      color: var(--accent);
+      letter-spacing: 2px;
+      margin-bottom: .75rem;
+    }
+    .module-title {
+      font-weight: 700;
+      font-size: 1.05rem;
+      margin-bottom: .5rem;
+      color: var(--text);
+    }
+    .module-desc { font-size: .875rem; color: var(--muted); line-height: 1.6; margin-bottom: 1rem; }
+    .module-topics { list-style: none; display: flex; flex-wrap: wrap; gap: .4rem; }
+    .module-topics li {
+      font-family: var(--mono);
+      font-size: .7rem;
+      background: rgba(0,200,255,.07);
+      color: var(--accent);
+      border: 1px solid rgba(0,200,255,.2);
+      padding: .2rem .6rem;
+      border-radius: 3px;
+    }
+    .module-duration {
+      display: flex;
+      align-items: center;
+      gap: .3rem;
+      font-size: .8rem;
+      color: var(--muted);
+      margin-top: 1rem;
+    }
+
+    /* ── CURRICULUM ── */
+    .curriculum-list { list-style: none; display: flex; flex-direction: column; gap: .6rem; }
+    .curriculum-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1rem 1.25rem;
+      transition: border-color .2s;
+    }
+    .curriculum-item:hover { border-color: var(--accent); }
+    .ci-icon {
+      width: 36px; height: 36px;
+      background: rgba(0,200,255,.1);
+      border-radius: 50%;
+      display: grid; place-items: center;
+      flex-shrink: 0;
+      font-size: 1rem;
+    }
+    .ci-title { font-weight: 600; font-size: .95rem; }
+    .ci-sub { font-size: .8rem; color: var(--muted); }
+    .ci-badge {
+      margin-left: auto;
+      font-family: var(--mono);
+      font-size: .7rem;
+      color: var(--green);
+      background: rgba(0,255,136,.08);
+      border: 1px solid rgba(0,255,136,.2);
+      padding: .2rem .65rem;
+      border-radius: 3px;
+      white-space: nowrap;
+    }
+
+    /* ── INSTRUCTOR ── */
+    #instructor { background: var(--surface); }
+    .instructor-wrap {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 3rem;
+      align-items: start;
+      max-width: 900px;
+    }
+    .instructor-avatar {
+      width: 160px; height: 160px;
+      border-radius: 50%;
+      border: 3px solid var(--accent);
+      background: linear-gradient(135deg, var(--accent2), var(--accent));
+      display: grid; place-items: center;
+      font-size: 4rem;
+      flex-shrink: 0;
+    }
+    .instructor-name { font-family: var(--display); font-size: 1.4rem; margin-bottom: .5rem; }
+    .instructor-title { color: var(--accent); font-size: .9rem; margin-bottom: 1rem; font-family: var(--mono); }
+    .instructor-bio { color: var(--muted); line-height: 1.8; margin-bottom: 1.5rem; }
+    .certs { display: flex; flex-wrap: wrap; gap: .5rem; }
+    .cert-badge {
+      font-family: var(--mono);
+      font-size: .72rem;
+      padding: .3rem .8rem;
+      border-radius: 3px;
+      background: rgba(0,200,255,.1);
+      border: 1px solid rgba(0,200,255,.25);
+      color: var(--accent);
+    }
+
+    /* ── PRICING ── */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+      max-width: 900px;
+    }
+    .price-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 2rem;
+      position: relative;
+      transition: transform .2s;
+    }
+    .price-card:hover { transform: translateY(-4px); }
+    .price-card.featured {
+      border-color: var(--accent);
+      background: linear-gradient(160deg, #0f1e35, #0a1e40);
+    }
+    .price-card.featured::before {
+      content: 'MOST POPULAR';
+      position: absolute;
+      top: -12px; left: 50%; transform: translateX(-50%);
+      background: var(--accent);
+      color: var(--bg);
+      font-family: var(--mono);
+      font-size: .65rem;
+      padding: .25rem .8rem;
+      border-radius: 20px;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+    .price-plan { font-family: var(--mono); font-size: .75rem; color: var(--muted); letter-spacing: 2px; margin-bottom: .5rem; }
+    .price-amount { font-family: var(--display); font-size: 2.4rem; color: var(--text); font-weight: 900; }
+    .price-amount sup { font-size: 1rem; vertical-align: top; margin-top: .5rem; display: inline-block; }
+    .price-period { font-size: .85rem; color: var(--muted); margin-bottom: 1.5rem; }
+    .price-features { list-style: none; display: flex; flex-direction: column; gap: .7rem; margin-bottom: 2rem; }
+    .price-features li { font-size: .9rem; color: var(--muted); padding-left: 1.4rem; position: relative; }
+    .price-features li::before { content: '✓'; position: absolute; left: 0; color: var(--green); font-weight: 700; }
+    .price-features li.no::before { content: '✕'; color: #ff4444; }
+    .price-features li.no { opacity: .5; }
+
+    /* ── FAQ ── */
+    #faq { background: var(--surface); }
+    .faq-list { max-width: 760px; display: flex; flex-direction: column; gap: .75rem; }
+    .faq-item {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      transition: border-color .2s;
+    }
+    .faq-item.open { border-color: var(--accent); }
+    .faq-q {
+      padding: 1.2rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: .95rem;
+    }
+    .faq-toggle { color: var(--accent); font-size: 1.3rem; transition: transform .2s; }
+    .faq-item.open .faq-toggle { transform: rotate(45deg); }
+    .faq-a {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height .3s ease;
+      color: var(--muted);
+      font-size: .9rem;
+      line-height: 1.8;
+    }
+    .faq-item.open .faq-a { max-height: 300px; }
+    .faq-a-inner { padding: 0 1.5rem 1.25rem; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 3rem 5%;
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr 1fr;
+      gap: 3rem;
+    }
+    .footer-brand { max-width: 240px; }
+    .footer-logo { font-family: var(--display); color: var(--accent); font-size: 1rem; letter-spacing: 2px; margin-bottom: .75rem; }
+    .footer-desc { font-size: .85rem; color: var(--muted); line-height: 1.7; }
+    .footer-col h4 { font-size: .8rem; letter-spacing: 2px; text-transform: uppercase; color: var(--text); margin-bottom: 1rem; font-family: var(--mono); }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: .6rem; }
+    .footer-col a { color: var(--muted); text-decoration: none; font-size: .875rem; transition: color .2s; }
+    .footer-col a:hover { color: var(--accent); }
+    .footer-bottom {
+      padding: 1.5rem 5%;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: .8rem;
+      color: var(--muted);
+    }
+
+    /* ── TERMINAL PING ── */
+    .terminal-block {
+      font-family: var(--mono);
+      background: #020810;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-top: 2rem;
+      font-size: .82rem;
+      color: #6b8aaa;
+      max-width: 520px;
+      position: relative;
+    }
+    .terminal-bar {
+      display: flex; gap: .5rem; margin-bottom: 1rem;
+    }
+    .dot { width: 12px; height: 12px; border-radius: 50%; }
+    .dot-r { background: #ff5f57; }
+    .dot-y { background: #febc2e; }
+    .dot-g { background: #28c840; }
+    .t-green { color: var(--green); }
+    .t-blue  { color: var(--accent); }
+    .t-white { color: var(--text); }
+    .cursor { animation: blink 1s step-end infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    /* ── SCROLL REVEAL ── */
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity .6s ease, transform .6s ease; }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .nav-links.open { display: flex; flex-direction: column; position: absolute; top: 64px; left: 0; right: 0; background: var(--surface); padding: 1.5rem 5%; border-bottom: 1px solid var(--border); }
+      .hero-visual { display: none; }
+      .hero-stats { flex-wrap: wrap; gap: 1.5rem; }
+      .instructor-wrap { grid-template-columns: 1fr; }
+      .instructor-avatar { width: 100px; height: 100px; font-size: 2.5rem; }
+      footer { grid-template-columns: 1fr 1fr; }
+      .footer-brand { grid-column: 1/-1; }
+      .footer-bottom { flex-direction: column; gap: .5rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <a class="nav-logo" href="#"><span>//</span> CCNA<span>PRO</span></a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#modules">Modules</a></li>
+    <li><a href="#curriculum">Curriculum</a></li>
+    <li><a href="#instructor">Instructor</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#faq">FAQ</a></li>
+    <li><a href="#pricing" class="nav-cta">Enroll Now</a></li>
+  </ul>
+  <div class="hamburger" onclick="document.getElementById('navLinks').classList.toggle('open')">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-content">
+    <p class="hero-eyebrow">Cisco Certified Network Associate</p>
+    <h1>
+      Master <span class="line-accent">Network</span><br>
+      Engineering<br>
+      From Scratch
+    </h1>
+    <p class="hero-sub">
+      A hands-on CCNA prep course built around real Cisco labs, packet tracer simulations, and exam-focused practice. Go from zero to certified.
+    </p>
+    <div class="hero-btns">
+      <a href="#pricing" class="btn-primary">Start Learning — ₹999</a>
+      <a href="#curriculum" class="btn-outline">View Syllabus</a>
+    </div>
+
+    <div class="terminal-block">
+      <div class="terminal-bar">
+        <div class="dot dot-r"></div>
+        <div class="dot dot-y"></div>
+        <div class="dot dot-g"></div>
+      </div>
+      <div><span class="t-green">Router0#</span> <span class="t-white">ping 192.168.1.1</span></div>
+      <div style="margin-top:.5rem; color:#6b8aaa;">Type escape sequence to abort.</div>
+      <div>Sending 5, 100-byte ICMP Echos...</div>
+      <div style="color: var(--green); margin-top:.3rem;">!!!!!  Success rate is 100% (5/5)</div>
+      <div style="margin-top:.5rem;"><span class="t-green">Router0#</span> <span class="cursor">_</span></div>
+    </div>
+
+    <div class="hero-stats">
+      <div>
+        <div class="stat-num">12,400+</div>
+        <div class="stat-label">Students Enrolled</div>
+      </div>
+      <div>
+        <div class="stat-num">96%</div>
+        <div class="stat-label">Pass Rate</div>
+      </div>
+      <div>
+        <div class="stat-num">60+</div>
+        <div class="stat-label">Lab Hours</div>
+      </div>
+      <div>
+        <div class="stat-num">4.9★</div>
+        <div class="stat-label">Avg Rating</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SVG Network Topology -->
+  <svg class="hero-visual" viewBox="0 0 500 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="250" cy="200" r="30" stroke="#00c8ff" stroke-width="2"/>
+    <circle cx="100" cy="80"  r="22" stroke="#00c8ff" stroke-width="1.5"/>
+    <circle cx="400" cy="80"  r="22" stroke="#00c8ff" stroke-width="1.5"/>
+    <circle cx="80"  cy="320" r="22" stroke="#00ff88" stroke-width="1.5"/>
+    <circle cx="420" cy="320" r="22" stroke="#00ff88" stroke-width="1.5"/>
+    <circle cx="250" cy="380" r="22" stroke="#00c8ff" stroke-width="1.5"/>
+    <line x1="250" y1="170" x2="115" y2="98"  stroke="#00c8ff" stroke-width="1" stroke-dasharray="4 4"/>
+    <line x1="250" y1="170" x2="385" y2="98"  stroke="#00c8ff" stroke-width="1" stroke-dasharray="4 4"/>
+    <line x1="250" y1="230" x2="95"  cy2="300" x2="95"  y2="304" stroke="#00ff88" stroke-width="1" stroke-dasharray="4 4"/>
+    <line x1="250" y1="230" x2="405" y2="304" stroke="#00ff88" stroke-width="1" stroke-dasharray="4 4"/>
+    <line x1="250" y1="230" x2="250" y2="358" stroke="#00c8ff" stroke-width="1" stroke-dasharray="4 4"/>
+    <text x="244" y="206" fill="#00c8ff" font-size="12" font-family="monospace">R1</text>
+    <text x="92"  y="85"  fill="#00c8ff" font-size="10" font-family="monospace">SW</text>
+    <text x="394" y="85"  fill="#00c8ff" font-size="10" font-family="monospace">SW</text>
+    <text x="72"  y="326" fill="#00ff88" font-size="10" font-family="monospace">PC</text>
+    <text x="413" y="326" fill="#00ff88" font-size="10" font-family="monospace">PC</text>
+    <text x="242" y="386" fill="#00c8ff" font-size="10" font-family="monospace">SRV</text>
+  </svg>
+</section>
+
+<!-- ── MODULES ── -->
+<section id="modules">
+  <p class="section-tag reveal">Course Modules</p>
+  <h2 class="reveal">Everything the CCNA <span style="color:var(--accent)">200-301</span> Covers</h2>
+  <p class="section-sub reveal">Six focused modules that mirror the official exam domains — built for working through them in sequence or jumping to what you need.</p>
+
+  <div class="modules-grid">
+    <div class="module-card reveal">
+      <div class="module-num">MODULE 01</div>
+      <div class="module-title">Network Fundamentals</div>
+      <div class="module-desc">OSI & TCP/IP models, cable types, Ethernet, network topologies, and how data moves across a network.</div>
+      <ul class="module-topics">
+        <li>OSI Model</li><li>TCP/IP</li><li>IPv4</li><li>IPv6</li><li>Subnetting</li>
+      </ul>
+      <div class="module-duration">⏱ 8 hours</div>
+    </div>
+    <div class="module-card reveal">
+      <div class="module-num">MODULE 02</div>
+      <div class="module-title">Network Access</div>
+      <div class="module-desc">VLANs, trunking, STP, EtherChannel, and wireless LAN configuration on Cisco switches.</div>
+      <ul class="module-topics">
+        <li>VLANs</li><li>802.1Q</li><li>STP</li><li>RSTP</li><li>Wi-Fi 6</li>
+      </ul>
+      <div class="module-duration">⏱ 10 hours</div>
+    </div>
+    <div class="module-card reveal">
+      <div class="module-num">MODULE 03</div>
+      <div class="module-title">IP Connectivity</div>
+      <div class="module-desc">Static routing, dynamic routing protocols (OSPF), and inter-VLAN routing with Layer 3 switches.</div>
+      <ul class="module-topics">
+        <li>OSPF</li><li>Static Routes</li><li>L3 Switch</li><li>NAT</li>
+      </ul>
+      <div class="module-duration">⏱ 12 hours</div>
+    </div>
+    <div class="module-card reveal">
+      <div class="module-num">MODULE 04</div>
+      <div class="module-title">IP Services</div>
+      <div class="module-desc">DHCP, DNS, NTP, SNMP, QoS, and first-hop redundancy protocols like HSRP and FHRP.</div>
+      <ul class="module-topics">
+        <li>DHCP</li><li>DNS</li><li>NTP</li><li>SNMP</li><li>QoS</li>
+      </ul>
+      <div class="module-duration">⏱ 8 hours</div>
+    </div>
+    <div class="module-card reveal">
+      <div class="module-num">MODULE 05</div>
+      <div class="module-title">Security Fundamentals</div>
+      <div class="module-desc">ACLs, AAA, port security, VPN concepts, threat landscape, and securing Cisco device access.</div>
+      <ul class="module-topics">
+        <li>ACLs</li><li>AAA</li><li>Port Security</li><li>VPN</li><li>SSH</li>
+      </ul>
+      <div class="module-duration">⏱ 10 hours</div>
+    </div>
+    <div class="module-card reveal">
+      <div class="module-num">MODULE 06</div>
+      <div class="module-title">Automation & Programmability</div>
+      <div class="module-desc">SDN, REST APIs, Ansible basics, JSON/XML, Cisco DNA Center overview, and network programmability concepts.</div>
+      <ul class="module-topics">
+        <li>SDN</li><li>REST API</li><li>Ansible</li><li>Python</li><li>JSON</li>
+      </ul>
+      <div class="module-duration">⏱ 7 hours</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CURRICULUM ── -->
+<section id="curriculum" style="background:var(--bg);">
+  <p class="section-tag reveal">Full Curriculum</p>
+  <h2 class="reveal">55 Lessons. 60+ Lab Hours.</h2>
+  <p class="section-sub reveal">Every lesson maps to a real exam objective. You know exactly what you're studying and why.</p>
+
+  <ul class="curriculum-list">
+    <li class="curriculum-item reveal"><div class="ci-icon">🖥</div><div><div class="ci-title">Network Devices & Topology Types</div><div class="ci-sub">Routers, switches, firewalls, hubs, and when to use each</div></div><span class="ci-badge">Free Preview</span></li>
+    <li class="curriculum-item reveal"><div class="ci-icon">📡</div><div><div class="ci-title">OSI Model Deep Dive</div><div class="ci-sub">Layer-by-layer walkthrough with real traffic analysis</div></div><span class="ci-badge">Free Preview</span></li>
+    <li class="curriculum-item reveal"><div class="ci-icon">🔢</div><div><div class="ci-title">IPv4 Addressing & Subnetting</div><div class="ci-sub">Binary, CIDR, VLSM, subnet calculation tricks</div></div><span class="ci-badge">Core</span></li>
+    <li class="curriculum-item reveal"><div class="ci-icon">🔀</div><div><div class="ci-title">VLAN Configuration Lab</div><div class="ci-sub">Packet Tracer: create VLANs, assign ports, verify with show commands</div></div><span class="ci-badge">Lab</span></li>
+    <li class="curriculum-item reveal"><div class="ci-icon">🌐</div><div><div class="ci-title">OSPF Single-Area Routing</div><div class="ci-sub">Configure OSPF, understand DR/BDR election, troubleshoot adjacencies</div></div><span class="ci-badge">Core</span></li>
+    <li class="curriculum-item reveal"><div class="ci-icon">🛡</div><div><div class="ci-title">Access Control Lists (ACL)</div><div class="ci-sub">Standard vs extended, named ACLs, placement best practices</div></div><span class="ci-badge">Core</span></li>
+    <li class="curriculum-item reveal"><div class="ci-icon">⚙️</div><div><div class="ci-title">REST API & Network Automation</div><div class="ci-sub">Postman basics, Python requests, Cisco DevNet sandbox</div></div><span class="ci-badge">Advanced</span></li>
+    <li class="curriculum-item reveal"><div class="ci-icon">📝</div><div><div class="ci-title">Full Practice Exam (200-301)</div><div class="ci-sub">120 questions, timed, with detailed answer explanations</div></div><span class="ci-badge">Exam Prep</span></li>
+  </ul>
+</section>
+
+<!-- ── INSTRUCTOR ── -->
+<section id="instructor">
+  <p class="section-tag reveal">Your Instructor</p>
+  <div class="instructor-wrap reveal">
+    <div class="instructor-avatar">👨‍💻</div>
+    <div>
+      <div class="instructor-name">Rajesh Sharma</div>
+      <div class="instructor-title">// Senior Network Engineer & CCIE #52841</div>
+      <p class="instructor-bio">
+        15 years designing enterprise networks for banks, ISPs, and data centers across India and the Middle East. Rajesh has trained over 12,000 students and holds six active Cisco certifications. His teaching style focuses on building intuition — not just memorizing commands — so you can troubleshoot anything on exam day and in the real world.
+      </p>
+      <div class="certs">
+        <span class="cert-badge">CCIE Enterprise</span>
+        <span class="cert-badge">CCNP Security</span>
+        <span class="cert-badge">AWS Networking Specialty</span>
+        <span class="cert-badge">Cisco DevNet Associate</span>
+        <span class="cert-badge">ITIL v4</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PRICING ── -->
+<section id="pricing" style="background:var(--bg);">
+  <p class="section-tag reveal">Pricing</p>
+  <h2 class="reveal">Simple, Transparent Plans</h2>
+  <p class="section-sub reveal">All plans include lifetime access to course updates. No subscriptions.</p>
+
+  <div class="pricing-grid">
+    <div class="price-card reveal">
+      <div class="price-plan">BASIC</div>
+      <div class="price-amount"><sup>₹</sup>499</div>
+      <div class="price-period">one-time payment</div>
+      <ul class="price-features">
+        <li>All 55 video lessons</li>
+        <li>Module quizzes</li>
+        <li>Downloadable notes</li>
+        <li class="no">Packet Tracer labs</li>
+        <li class="no">Practice exams</li>
+        <li class="no">Community access</li>
+      </ul>
+      <a href="#" class="btn-outline" style="display:block;text-align:center;">Get Basic</a>
+    </div>
+    <div class="price-card featured reveal">
+      <div class="price-plan">PRO</div>
+      <div class="price-amount"><sup>₹</sup>999</div>
+      <div class="price-period">one-time payment</div>
+      <ul class="price-features">
+        <li>All 55 video lessons</li>
+        <li>Module quizzes</li>
+        <li>Downloadable notes</li>
+        <li>30+ Packet Tracer labs</li>
+        <li>3 full practice exams</li>
+        <li>Private Discord community</li>
+      </ul>
+      <a href="#" class="btn-primary" style="display:block;text-align:center;">Enroll in Pro</a>
+    </div>
+    <div class="price-card reveal">
+      <div class="price-plan">BOOTCAMP</div>
+      <div class="price-amount"><sup>₹</sup>2,499</div>
+      <div class="price-period">one-time payment</div>
+      <ul class="price-features">
+        <li>Everything in Pro</li>
+        <li>Live weekly doubt sessions</li>
+        <li>1-on-1 mock interview</li>
+        <li>Resume review</li>
+        <li>Job placement assistance</li>
+        <li>Certificate of completion</li>
+      </ul>
+      <a href="#" class="btn-outline" style="display:block;text-align:center;">Get Bootcamp</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── FAQ ── -->
+<section id="faq">
+  <p class="section-tag reveal">FAQ</p>
+  <h2 class="reveal">Common Questions</h2>
+  <div class="faq-list">
+    <div class="faq-item reveal">
+      <div class="faq-q" onclick="toggleFaq(this)">Do I need prior networking experience? <span class="faq-toggle">+</span></div>
+      <div class="faq-a"><div class="faq-a-inner">No — Module 1 starts from absolute basics. If you know how to use a computer, you're ready. The course is designed to take complete beginners through to exam-ready in around 3 months at a part-time pace.</div></div>
+    </div>
+    <div class="faq-item reveal">
+      <div class="faq-q" onclick="toggleFaq(this)">Which exam version does this cover? <span class="faq-toggle">+</span></div>
+      <div class="faq-a"><div class="faq-a-inner">This course is aligned with the CCNA 200-301 exam, the current version as of 2024. Cisco updates the exam blueprint periodically and we update the course content to match within 30 days of any changes.</div></div>
+    </div>
+    <div class="faq-item reveal">
+      <div class="faq-q" onclick="toggleFaq(this)">Is Cisco Packet Tracer free? <span class="faq-toggle">+</span></div>
+      <div class="faq-a"><div class="faq-a-inner">Yes. Cisco Packet Tracer is completely free. We include a setup guide to get it running on Windows, Mac, or Linux. All lab files are provided as downloadable .pkt files you can open directly.</div></div>
+    </div>
+    <div class="faq-item reveal">
+      <div class="faq-q" onclick="toggleFaq(this)">How long do I have access? <span class="faq-toggle">+</span></div>
+      <div class="faq-a"><div class="faq-a-inner">Lifetime. Pay once and access the course — including all future updates — forever. No renewal fees, no subscriptions. If Cisco releases a new exam version, you get the updated content at no extra charge.</div></div>
+    </div>
+    <div class="faq-item reveal">
+      <div class="faq-q" onclick="toggleFaq(this)">Is there a refund policy? <span class="faq-toggle">+</span></div>
+      <div class="faq-a"><div class="faq-a-inner">Yes — full refund within 7 days if you're not satisfied, no questions asked. Just email support and we'll process it within 24 hours.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-brand">
+    <div class="footer-logo">// CCNAPRO</div>
+    <p class="footer-desc">India's most practical CCNA training. Built by engineers, for engineers.</p>
+  </div>
+  <div class="footer-col">
+    <h4>Course</h4>
+    <ul>
+      <li><a href="#modules">Modules</a></li>
+      <li><a href="#curriculum">Curriculum</a></li>
+      <li><a href="#instructor">Instructor</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+    </ul>
+  </div>
+  <div class="footer-col">
+    <h4>Resources</h4>
+    <ul>
+      <li><a href="#">Free Subnet Calculator</a></li>
+      <li><a href="#">Cisco Command Cheatsheet</a></li>
+      <li><a href="#">CCNA Study Guide PDF</a></li>
+      <li><a href="#">Blog</a></li>
+    </ul>
+  </div>
+  <div class="footer-col">
+    <h4>Support</h4>
+    <ul>
+      <li><a href="#">Contact Us</a></li>
+      <li><a href="#">Privacy Policy</a></li>
+      <li><a href="#">Terms of Service</a></li>
+      <li><a href="#">Refund Policy</a></li>
+    </ul>
+  </div>
+</footer>
+<div class="footer-bottom">
+  <span>© 2025 CCNA Pro. All rights reserved.</span>
+  <span style="font-family:var(--mono); font-size:.75rem; color:var(--accent)">// Built for network engineers</span>
+</div>
+
+<script>
+  // Scroll reveal
+  const revealEls = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+  }, { threshold: 0.12 });
+  revealEls.forEach(el => observer.observe(el));
+
+  // FAQ toggle
+  function toggleFaq(btn) {
+    const item = btn.parentElement;
+    const wasOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+    if (!wasOpen) item.classList.add('open');
+  }
+
+  // Smooth scroll for nav links
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth' }); }
+      document.getElementById('navLinks').classList.remove('open');
+    });
+  });
+</script>
+</body>
+</html>
